@@ -11,27 +11,6 @@ This project demonstrates how to use Apache Spark Structured Streaming to proces
 
 Each task includes detailed code explanations, sample outputs, and instructions for executing the application.
 
----
-
-## Table of Contents
-
-- [Prerequisites](#prerequisites)
-- [Task 1: Basic Streaming Ingestion and JSON Parsing](#task-1-basic-streaming-ingestion-and-json-parsing)
-- [Task 2: Real-Time Aggregations (Driver-Level)](#task-2-real-time-aggregations-driver-level)
-- [Task 3: Windowed Time-Based Analytics](#task-3-windowed-time-based-analytics)
-- [Additional Notes & Troubleshooting](#additional-notes--troubleshooting)
-
----
-
-## Prerequisites
-
-- **Apache Spark** (version 2.4 or later recommended)
-- **Python 3.x** with PySpark installed
-- **Netcat (nc)** or a similar tool to simulate streaming data
-- A terminal to run `spark-submit` and `nc`
-
----
-
 ## Task 1: Basic Streaming Ingestion and JSON Parsing
 
 ### Overview
@@ -89,6 +68,66 @@ query = parsed_stream.writeStream \
 
 query.awaitTermination()
 
+# Ride-Sharing Analytics Streaming Tasks with Apache Spark (Tasks 2 & 3)
+
+This document provides instructions, code explanations, sample outputs, and execution commands for two Spark Structured Streaming tasks for ride-sharing analytics:
+
+- **Task 2:** Real-Time Aggregations (Driver-Level)
+- **Task 3:** Windowed Time-Based Analytics
+
+Both tasks reuse streaming data from a socket (e.g., `localhost:9999`) and demonstrate how to perform aggregations and write outputs to sinks.
+
+---
+
+## Table of Contents
+
+- [Prerequisites](#prerequisites)
+- [Task 2: Real-Time Aggregations (Driver-Level)](#task-2-real-time-aggregations-driver-level)
+  - [Overview](#overview-task-2)
+  - [Code Explanation](#code-explanation-task-2)
+  - [Code](#code-task-2)
+  - [Execution Instructions](#execution-instructions-task-2)
+  - [Expected Output](#expected-output-task-2)
+- [Task 3: Windowed Time-Based Analytics](#task-3-windowed-time-based-analytics)
+  - [Overview](#overview-task-3)
+  - [Code Explanation](#code-explanation-task-3)
+  - [Code](#code-task-3)
+  - [Execution Instructions](#execution-instructions-task-3)
+  - [Expected Output](#expected-output-task-3)
+- [Additional Notes & Troubleshooting](#additional-notes--troubleshooting)
+
+---
+
+## Prerequisites
+
+- **Apache Spark** (version 2.4 or later recommended)
+- **Python 3.x** with PySpark installed
+- **Netcat (nc)** or a similar tool to simulate streaming data
+- A terminal to run `spark-submit` and `nc`
+
+---
+
+## Task 2: Real-Time Aggregations (Driver-Level)
+
+### Overview (Task 2)
+This task computes real-time aggregations from streaming ride-sharing data:
+- **Total fare amount** (using `SUM(fare_amount)`)
+- **Average distance** (using `AVG(distance_km)`)
+
+The aggregated results are both displayed on the console and written to CSV files using a `foreachBatch` sink.
+
+### Code Explanation (Task 2)
+1. **Reuse Parsed Data:**  
+   The data is parsed from JSON (using a predefined schema) from a socket source.
+2. **Aggregation:**  
+   Group the data by `driver_id` and calculate:
+   - `total_fare` (sum of `fare_amount`)
+   - `avg_distance` (average of `distance_km`)
+3. **Console Output:**  
+   The aggregation is output in `complete` mode to the console.
+4. **CSV Output via foreachBatch:**  
+   Each microbatch is written as CSV (in append mode) to a specified output directory. A unique checkpoint directory is used for maintaining state.
+
 # task2.py
 from pyspark.sql import SparkSession
 from pyspark.sql.functions import from_json, col, sum as _sum, avg
@@ -144,3 +183,96 @@ csv_query = aggregated_stream.writeStream \
 
 console_query.awaitTermination()
 csv_query.awaitTermination()
+
+# Task 3: Windowed Time-Based Analytics
+
+This task performs a windowed aggregation on the streaming ride-sharing data. Specifically, it:
+
+- Converts the incoming timestamp (initially a string) into a proper TimestampType.
+- Applies a watermark and performs a 5-minute windowed aggregation (sliding every 1 minute) to compute the sum of `fare_amount`.
+- Flattens the window column (extracting `window.start` and `window.end`) to enable CSV output.
+- Writes the aggregated results to CSV files.
+
+---
+
+## Code Explanation
+
+1. **Spark Session Creation:**  
+   Initializes the Spark application and configures logging.
+
+2. **Schema Definition:**  
+   Defines the expected schema for the incoming JSON data. Here, the `timestamp` field is initially a string.
+
+3. **Socket Stream Reading:**  
+   Reads streaming data from a socket (e.g., `localhost:9999`).
+
+4. **JSON Parsing and Timestamp Conversion:**  
+   Parses the JSON data using the defined schema and converts the string-based timestamp to a proper `TimestampType` with `to_timestamp`.
+
+5. **Windowed Aggregation:**  
+   - Applies a watermark of 5 minutes to the event time.
+   - Uses a sliding window of 5 minutes that slides every 1 minute to aggregate the sum of `fare_amount`.
+
+6. **Flattening the Window Column:**  
+   Extracts `window.start` and `window.end` into separate columns because CSV does not support complex types.
+
+7. **CSV Output:**  
+   Writes the flattened aggregation result to CSV files using append mode. A unique checkpoint directory is specified for state management.
+
+---
+
+## Code
+
+```python
+from pyspark.sql import SparkSession
+from pyspark.sql.functions import from_json, col, sum as _sum, window, to_timestamp
+from pyspark.sql.types import StructType, StringType, DoubleType, TimestampType
+
+# 1. Create Spark session
+spark = SparkSession.builder \
+    .appName("WindowedFareAnalytics") \
+    .getOrCreate()
+spark.sparkContext.setLogLevel("ERROR")
+
+# 2. Define schema (timestamp as string to demonstrate conversion)
+schema = StructType() \
+    .add("trip_id", StringType()) \
+    .add("driver_id", StringType()) \
+    .add("distance_km", DoubleType()) \
+    .add("fare_amount", DoubleType()) \
+    .add("timestamp", StringType())
+
+# 3. Read from socket
+raw_stream = spark.readStream \
+    .format("socket") \
+    .option("host", "localhost") \
+    .option("port", 9999) \
+    .load()
+
+# 4. Parse JSON and convert timestamp to TimestampType
+parsed_stream = raw_stream.select(from_json(col("value"), schema).alias("data")).select("data.*")
+parsed_stream = parsed_stream.withColumn("event_time", to_timestamp(col("timestamp")))
+
+# 5. Perform a 5-minute windowed aggregation (sliding every 1 minute) on fare_amount
+windowed_agg = parsed_stream \
+    .withWatermark("event_time", "5 minutes") \
+    .groupBy(window(col("event_time"), "5 minutes", "1 minute")) \
+    .agg(_sum("fare_amount").alias("total_fare"))
+
+# 6. Flatten the window column (extract window.start and window.end)
+flattened = windowed_agg.select(
+    col("window.start").alias("window_start"),
+    col("window.end").alias("window_end"),
+    col("total_fare")
+)
+
+# 7. Write the windowed results to CSV
+query = flattened.writeStream \
+    .outputMode("append") \
+    .format("csv") \
+    .option("path", "output/task3_windowed/") \
+    .option("checkpointLocation", "output/task3_checkpoint/") \
+    .start()
+
+query.awaitTermination()
+
