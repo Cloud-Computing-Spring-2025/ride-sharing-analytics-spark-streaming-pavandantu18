@@ -68,45 +68,6 @@ query = parsed_stream.writeStream \
 
 query.awaitTermination()
 
-# Ride-Sharing Analytics Streaming Tasks with Apache Spark (Tasks 2 & 3)
-
-This document provides instructions, code explanations, sample outputs, and execution commands for two Spark Structured Streaming tasks for ride-sharing analytics:
-
-- **Task 2:** Real-Time Aggregations (Driver-Level)
-- **Task 3:** Windowed Time-Based Analytics
-
-Both tasks reuse streaming data from a socket (e.g., `localhost:9999`) and demonstrate how to perform aggregations and write outputs to sinks.
-
----
-
-## Table of Contents
-
-- [Prerequisites](#prerequisites)
-- [Task 2: Real-Time Aggregations (Driver-Level)](#task-2-real-time-aggregations-driver-level)
-  - [Overview](#overview-task-2)
-  - [Code Explanation](#code-explanation-task-2)
-  - [Code](#code-task-2)
-  - [Execution Instructions](#execution-instructions-task-2)
-  - [Expected Output](#expected-output-task-2)
-- [Task 3: Windowed Time-Based Analytics](#task-3-windowed-time-based-analytics)
-  - [Overview](#overview-task-3)
-  - [Code Explanation](#code-explanation-task-3)
-  - [Code](#code-task-3)
-  - [Execution Instructions](#execution-instructions-task-3)
-  - [Expected Output](#expected-output-task-3)
-- [Additional Notes & Troubleshooting](#additional-notes--troubleshooting)
-
----
-
-## Prerequisites
-
-- **Apache Spark** (version 2.4 or later recommended)
-- **Python 3.x** with PySpark installed
-- **Netcat (nc)** or a similar tool to simulate streaming data
-- A terminal to run `spark-submit` and `nc`
-
----
-
 ## Task 2: Real-Time Aggregations (Driver-Level)
 
 ### Overview (Task 2)
